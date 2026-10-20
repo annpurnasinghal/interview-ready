@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InterviewReady — Your Daily MBA Prep</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F3EE;
+      --surface: #FFFFFF;
+      --text: #1C1917;
+      --text-secondary: #78716C;
+      --accent: #6D28D9;
+      --accent-soft: #EDE9FE;
+      --accent-mid: #A78BFA;
+      --border: #E7E5E4;
+      --border-hover: #D6D3D1;
+      --green: #059669;
+      --green-soft: #D1FAE5;
+      --amber: #D97706;
+      --amber-soft: #FEF3C7;
+      --red: #DC2626;
+      --red-soft: #FEE2E2;
+      --blue: #2563EB;
+      --blue-soft: #DBEAFE;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow-sm: 0 1px 2px rgba(28,25,23,0.04);
+      --shadow-md: 0 4px 16px rgba(28,25,23,0.06);
+      --shadow-lg: 0 8px 32px rgba(28,25,23,0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .date-badge {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--bg);
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .streak-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--amber);
+      background: var(--amber-soft);
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      margin-bottom: 24px;
+      animation: fadeUp 0.5s ease-out;
+    }
+
+    .hero-greeting {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp 0.5s ease-out 0.1s both;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .progress-count {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-mid));
+      border-radius: 3px;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0%;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .progress-dot {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .progress-dot.done {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .progress-dot:hover {
+      transform: scale(1.05);
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.25s, border-color 0.25s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .card-header:active { background: var(--bg); }
+
+    .card-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-title-group { min-width: 0; }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    .card-chevron {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      color: var(--text-secondary);
+    }
+
+    .card.open .card-chevron { transform: rotate(180deg); }
+
+    .card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .card.open .card-body { max-height: 2000px; }
+
+    .card-inner {
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Card colors */
+    .card-news .card-icon { background: var(--blue-soft); }
+    .card-hr .card-icon { background: var(--red-soft); }
+    .card-guess .card-icon { background: var(--green-soft); }
+    .card-gd .card-icon { background: var(--amber-soft); }
+    .card-company .card-icon { background: var(--accent-soft); }
+
+    /* Card stagger animations */
+    .card:nth-child(1) { animation: fadeUp 0.4s ease-out 0.15s both; }
+    .card:nth-child(2) { animation: fadeUp 0.4s ease-out 0.22s both; }
+    .card:nth-child(3) { animation: fadeUp 0.4s ease-out 0.29s both; }
+    .card:nth-child(4) { animation: fadeUp 0.4s ease-out 0.36s both; }
+    .card:nth-child(5) { animation: fadeUp 0.4s ease-out 0.43s both; }
+
+    /* ── CONTENT STYLES ── */
+    .headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: 21px;
+      line-height: 1.3;
+      margin: 14px 0 8px;
+      color: var(--text);
+    }
+
+    .body-text {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #44403C;
+      margin: 8px 0;
+    }
+
+    .label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      margin: 18px 0 6px;
+    }
+
+    .highlight-box {
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #44403C;
+      margin: 8px 0;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-top: 14px;
+    }
+
+    .tag-blue { background: var(--blue-soft); color: var(--blue); }
+    .tag-green { background: var(--green-soft); color: var(--green); }
+    .tag-amber { background: var(--amber-soft); color: var(--amber); }
+    .tag-red { background: var(--red-soft); color: var(--red); }
+
+    /* STAR Grid */
+    .star-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .star-item {
+      background: var(--bg);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+    }
+
+    .star-letter {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+
+    .star-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Steps */
+    .steps {
+      list-style: none;
+      margin: 10px 0;
+      counter-reset: step;
+    }
+
+    .steps li {
+      counter-increment: step;
+      padding: 10px 0 10px 36px;
+      position: relative;
+      font-size: 14px;
+      line-height: 1.6;
+      border-bottom: 1px solid var(--border);
+      color: #44403C;
+    }
+
+    .steps li:last-child { border-bottom: none; }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 24px;
+      height: 24px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Difficulty */
+    .difficulty {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-top: 14px;
+    }
+
+    .diff-easy { background: var(--green-soft); color: var(--green); }
+    .diff-mid { background: var(--amber-soft); color: var(--amber); }
+    .diff-tough { background: var(--red-soft); color: var(--red); }
+
+    /* Spoiler */
+    .spoiler-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: all 0.2s;
+    }
+
+    .spoiler-btn:hover {
+      background: #5B21B6;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(109,40,217,0.3);
+    }
+
+    .spoiler-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .spoiler-content.show { max-height: 600px; }
+
+    /* GD Points */
+    .points-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .points-col h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .points-col ul {
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .points-col ul li {
+      padding: 5px 0 5px 20px;
+      position: relative;
+      color: #44403C;
+    }
+
+    .points-col ul li::before {
+      position: absolute;
+      left: 0;
+      top: 5px;
+      font-weight: 700;
+    }
+
+    .points-for li::before { content: "✓"; color: var(--green); }
+    .points-against li::before { content: "✗"; color: var(--red); }
+
+    .tip-box {
+      background: var(--amber-soft);
+      border: 1px solid #FDE68A;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      line-height: 1.6;
+      color: #92400E;
+    }
+
+    /* Company */
+    .meta-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .meta-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ── MARK DONE BUTTON ── */
+    .mark-done {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mark-done:hover {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .mark-done.completed {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 32px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      animation: fadeUp 0.4s ease-out 0.5s both;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .hero-greeting { font-size: 26px; }
+      .star-grid { grid-template-columns: 1fr; }
+      .points-row { grid-template-columns: 1fr; }
+      .headline { font-size: 19px; }
+      .main { padding: 16px 12px 32px; }
+      .progress-dots { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo">InterviewReady</div>
+      <div class="header-right">
+        <div class="streak-badge">🔥 <span id="streakCount">1</span></div>
+        <div class="date-badge" id="todayDate"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="main" id="content">
+    <div class="loading" id="loader">
+      <div class="spinner"></div>
+      <div class="loading-text">Generating today's prep...</div>
+      <div class="loading-sub">Powered by AI, tailored for MBA interviews</div>
+    </div>
+  </main>
+
+  <script>
+    // ── Date formatting ──
+    const today = new Date();
+    document.getElementById('todayDate').textContent = today.toLocaleDateString('en-IN', {
+      weekday: 'short', day: 'numeric', month: 'short'
+    });
+
+    // ── Greeting ──
+    function getGreeting() {
+      const h = new Date().getHours();
+      if (h < 12) return 'Good morning';
+      if (h < 17) return 'Good afternoon';
+      return 'Good evening';
+    }
+
+    // ── Progress tracking (localStorage) ──
+    const STORAGE_KEY = 'ir_progress_' + today.toISOString().split('T')[0];
+    let completed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
+      updateProgress();
+    }
+
+    function toggleDone(key, btn) {
+      completed[key] = !completed[key];
+      btn.classList.toggle('completed', completed[key]);
+      btn.innerHTML = completed[key]
+        ? '✓ Done'
+        : '○ Mark as done';
+      saveProgress();
+    }
+
+    function updateProgress() {
+      const keys = ['news', 'hr', 'guess', 'gd', 'company'];
+      const doneCount = keys.filter(k => completed[k]).length;
+      const pct = (doneCount / 5) * 100;
+
+      const fill = document.getElementById('progressFill');
+      const count = document.getElementById('progressCount');
+      if (fill) fill.style.width = pct + '%';
+      if (count) count.textContent = doneCount + ' / 5 done';
+
+      keys.forEach(k => {
+        const dot = document.getElementById('dot-' + k);
+        if (dot) dot.classList.toggle('done', !!completed[k]);
+      });
+    }
+
+    // ── Card toggle ──
+    function toggleCard(id) {
+      const card = document.getElementById(id);
+      const wasOpen = card.classList.contains('open');
+      card.classList.toggle('open');
+    }
+
+    // ── Spoiler toggle ──
+    function toggleSpoiler(btn) {
+      const content = btn.nextElementSibling;
+      content.classList.toggle('show');
+      btn.textContent = content.classList.contains('show') ? 'Hide approach' : 'Reveal approach';
+    }
+
+    // ── Difficulty class ──
+    function diffClass(level) {
+      const l = (level || '').toLowerCase();
+      if (l === 'easy') return 'diff-easy';
+      if (l === 'tough') return 'diff-tough';
+      return 'diff-mid';
+    }
+
+    // ── Done button HTML ──
+    function doneBtn(key) {
+      const isDone = completed[key];
+      return `<button class="mark-done ${isDone ? 'completed' : ''}" onclick="toggleDone('${key}', this)">
+        ${isDone ? '✓ Done' : '○ Mark as done'}
+      </button>`;
+    }
+
+    // ── Chevron SVG ──
+    const chevron = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>`;
+
+    // ── RENDER ──
+    function render(data) {
+      const d = data;
+      const container = document.getElementById('content');
+
+      container.innerHTML = `
+        <div class="hero">
+          <div class="hero-greeting">${getGreeting()}.</div>
+          <div class="hero-sub">5 cards · 10 minutes · one step closer to the offer</div>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-label">Today's progress</span>
+            <span class="progress-count" id="progressCount">0 / 5 done</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-dots">
+            <span class="progress-dot" id="dot-news" onclick="toggleCard('card-news')">📰 News</span>
+            <span class="progress-dot" id="dot-hr" onclick="toggleCard('card-hr')">🎯 HR</span>
+            <span class="progress-dot" id="dot-guess" onclick="toggleCard('card-guess')">🧮 Guess</span>
+            <span class="progress-dot" id="dot-gd" onclick="toggleCard('card-gd')">💬 GD</span>
+            <span class="progress-dot" id="dot-company" onclick="toggleCard('card-company')">🏢 Co.</span>
+          </div>
+        </div>
+
+        <div class="cards-list">
+
+          <!-- NEWS -->
+          <div class="card card-news open" id="card-news">
+            <div class="card-header" onclick="toggleCard('card-news')">
+              <div class="card-label">
+                <div class="card-icon">📰</div>
+                <div class="card-title-group">
+                  <div class="card-title">Today's Business Bite</div>
+                  <div class="card-subtitle">${d.newsBite.category || 'Business'}</div>
+                </div>
+              </div>
+              <div class="card-chevron">${chevron}</div>
+            </div>
+            <div class="card-body"><div class="card-inner">
+              <div class="headline">${d.newsBite.headline}</div>
+              <p class="body-text">${d.newsBite.summary}</p>
+              <div class="label">Interview-ready frame</div>
+              <div class="highlight-box">${d.newsBite.interviewFrame}</div>
+              ${doneBtn('news')}
+            </div></div>
+          </div>
+
+          <!-- HR -->
+          <div class="card card-hr" id="card-hr">
+            <div class="card-header" onclick="toggleCard('card-hr')">
+              <div class="card-label">
+                <div class="card-icon">🎯</div>
+                <div class="card-title-group">
+                  <div class="card-title">HR Question of the Day</div>
+                  <div class="card-subtitle">Behavioral round</div>
+                </div>
+              </div>
+              <div class="card-chevron">${chevron}</div>
+            </div>
+            <div class="card-body"><div class="card-inner">
+              <div class="headline">${d.hrQuestion.question}</div>
+              <p class="body-text" style="color:var(--text-secondary); font-style:italic;">Testing: ${d.hrQuestion.whyAsked}</p>
+              <div class="label">STAR framework</div>
+              <div class="star-grid">
+                <div class="star-item"><div class="star-letter">S — Situation</div><div class="star-text">${d.hrQuestion.starTemplate.situation}</div></div>
+                <div class="star-item"><div class="star-letter">T — Task</div><div class="star-text">${d.hrQuestion.starTemplate.task}</div></div>
+                <div class="star-item"><div class="star-letter">A — Action</div><div class="star-text">${d.hrQuestion.starTemplate.action}</div></div>
+                <div class="star-item"><div class="star-letter">R — Result</div><div class="star-text">${d.hrQuestion.starTemplate.result}</div></div>
+              </div>
+              <div class="label">Strong opener</div>
+              <div class="highlight-box">${d.hrQuestion.sampleOpener}</div>
+              ${doneBtn('hr')}
+            </div></div>
+          </div>
+
+          <!-- GUESSTIMATE -->
+          <div class="card card-guess" id="card-guess">
+            <div class="card-header" onclick="toggleCard('card-guess')">
+              <div class="card-label">
+                <div class="card-icon">🧮</div>
+                <div class="card-title-group">
+                  <div class="card-title">Guesstimate Challenge</div>
+                  <div class="card-subtitle">Market sizing</div>
+                </div>
+              </div>
+              <div class="card-chevron">${chevron}</div>
+            </div>
+            <div class="card-body"><div class="card-inner">
+              <span class="difficulty ${diffClass(d.guesstimate.difficulty)}">${d.guesstimate.difficulty}</span>
+              <div class="headline">${d.guesstimate.question}</div>
+              <p class="body-text">Try solving this in 3 minutes before looking at the approach.</p>
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Reveal approach</button>
+              <div class="spoiler-content">
+                <ol class="steps">
+                  ${d.guesstimate.approach.map(s => `<li>${s}</li>`).join('')}
+                </ol>
+                <div class="highlight-box">${d.guesstimate.ballpark}</div>
+              </div>
+              ${doneBtn('guess')}
+            </div></div>
+          </div>
+
+          <!-- GD -->
+          <div class="card card-gd" id="card-gd">
+            <div class="card-header" onclick="toggleCard('card-gd')">
+              <div class="card-label">
+                <div class="card-icon">💬</div>
+                <div class="card-title-group">
+                  <div class="card-title">GD Topic of the Day</div>
+                  <div class="card-subtitle">Argue both sides</div>
+                </div>
+              </div>
+              <div class="card-chevron">${chevron}</div>
+            </div>
+            <div class="card-body"><div class="card-inner">
+              <div class="headline">${d.gdTopic.topic}</div>
+              <p class="body-text">${d.gdTopic.context}</p>
+              <div class="points-row">
+                <div class="points-col">
+                  <h4 style="color:var(--green)">✅ For</h4>
+                  <ul class="points-for">${d.gdTopic.pointsFor.map(p => `<li>${p}</li>`).join('')}</ul>
+                </div>
+                <div class="points-col">
+                  <h4 style="color:var(--red)">❌ Against</h4>
+                  <ul class="points-against">${d.gdTopic.pointsAgainst.map(p => `<li>${p}</li>`).join('')}</ul>
+                </div>
+              </div>
+              <div class="tip-box">💡 ${d.gdTopic.tip}</div>
+              ${doneBtn('gd')}
+            </div></div>
+          </div>
+
+          <!-- COMPANY -->
+          <div class="card card-company" id="card-company">
+            <div class="card-header" onclick="toggleCard('card-company')">
+              <div class="card-label">
+                <div class="card-icon">🏢</div>
+                <div class="card-title-group">
+                  <div class="card-title">Company Spotlight</div>
+                  <div class="card-subtitle">${d.companySpotlight.name}</div>
+                </div>
+              </div>
+              <div class="card-chevron">${chevron}</div>
+            </div>
+            <div class="card-body"><div class="card-inner">
+              <div class="meta-row">
+                <span class="meta-chip">${d.companySpotlight.industry}</span>
+                <span class="meta-chip">${d.companySpotlight.roles}</span>
+              </div>
+              <p class="body-text" style="margin-top:14px;">${d.companySpotlight.brief}</p>
+              <div class="label">Likely interview question</div>
+              <div class="highlight-box">${d.companySpotlight.likelyQuestion}</div>
+              ${doneBtn('company')}
+            </div></div>
+          </div>
+
+        </div>
+
+        <div class="footer">
+          Built with ☕ for placement season<br>
+          <a href="#" onclick="regenerate(); return false;">Regenerate today's content</a>
+        </div>
+      `;
+
+      updateProgress();
+    }
+
+    // ── Regenerate content ──
+    async function regenerate() {
+      document.getElementById('content').innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <div class="loading-text">Regenerating...</div>
+        </div>`;
+
+      try {
+        const res = await fetch('/api/regenerate', { method: 'POST' });
+        const json = await res.json();
+        if (json.success) render(json.data);
+      } catch(e) {
+        location.reload();
+      }
+    }
+
+    // ── INIT ──
+    fetch('/api/today')
+      .then(r => r.json())
+      .then(json => {
+        if (json.success) render(json.data);
+        else document.getElementById('content').innerHTML = `
+          <div class="loading">
+            <div class="loading-text">Something went wrong. Check your terminal.</div>
+          </div>`;
+      })
+      .catch(() => {
+        document.getElementById('content').innerHTML = `
+          <div class="loading">
+            <div class="loading-text">Can't reach the server. Is it running?</div>
+          </div>`;
+      });
+  </script>
+
+</body>
+</html>

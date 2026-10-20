@@ -1,0 +1,5 @@
+node_modules/
+interview_ready.db
+interview_ready.db-wal
+interview_ready.db-shm
+.env
