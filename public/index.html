@@ -4,919 +4,185 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InterviewReady — Your Daily MBA Prep</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #F5F3EE;
-      --surface: #FFFFFF;
-      --text: #1C1917;
-      --text-secondary: #78716C;
-      --accent: #6D28D9;
-      --accent-soft: #EDE9FE;
-      --accent-mid: #A78BFA;
-      --border: #E7E5E4;
-      --border-hover: #D6D3D1;
-      --green: #059669;
-      --green-soft: #D1FAE5;
-      --amber: #D97706;
-      --amber-soft: #FEF3C7;
-      --red: #DC2626;
-      --red-soft: #FEE2E2;
-      --blue: #2563EB;
-      --blue-soft: #DBEAFE;
-      --radius: 16px;
-      --radius-sm: 10px;
-      --shadow-sm: 0 1px 2px rgba(28,25,23,0.04);
-      --shadow-md: 0 4px 16px rgba(28,25,23,0.06);
-      --shadow-lg: 0 8px 32px rgba(28,25,23,0.08);
-    }
-
-    body {
-      font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── HEADER ── */
-    .header {
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-inner {
-      max-width: 620px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      color: var(--accent);
-      letter-spacing: -0.3px;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .date-badge {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      background: var(--bg);
-      padding: 5px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-    }
-
-    .streak-badge {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--amber);
-      background: var(--amber-soft);
-      padding: 5px 10px;
-      border-radius: 20px;
-    }
-
-    /* ── MAIN ── */
-    .main {
-      max-width: 620px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      margin-bottom: 24px;
-      animation: fadeUp 0.5s ease-out;
-    }
-
-    .hero-greeting {
-      font-family: 'DM Serif Display', serif;
-      font-size: 32px;
-      color: var(--text);
-      line-height: 1.2;
-      margin-bottom: 6px;
-    }
-
-    .hero-sub {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    /* ── PROGRESS BAR ── */
-    .progress-section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-      animation: fadeUp 0.5s ease-out 0.1s both;
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .progress-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .progress-count {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 6px;
-      background: var(--bg);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-mid));
-      border-radius: 3px;
-      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-      width: 0%;
-    }
-
-    .progress-dots {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .progress-dot {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--text-secondary);
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: var(--bg);
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-    }
-
-    .progress-dot.done {
-      background: var(--green-soft);
-      color: var(--green);
-    }
-
-    .progress-dot:hover {
-      transform: scale(1.05);
-    }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      transition: box-shadow 0.25s, border-color 0.25s;
-    }
-
-    .card:hover {
-      box-shadow: var(--shadow-md);
-      border-color: var(--border-hover);
-    }
-
-    .card-header {
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-    }
-
-    .card-header:active { background: var(--bg); }
-
-    .card-label {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .card-title-group { min-width: 0; }
-
-    .card-title {
-      font-weight: 600;
-      font-size: 15px;
-      line-height: 1.3;
-    }
-
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 1px;
-    }
-
-    .card-chevron {
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      color: var(--text-secondary);
-    }
-
-    .card.open .card-chevron { transform: rotate(180deg); }
-
-    .card-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .card.open .card-body { max-height: 2000px; }
-
-    .card-inner {
-      padding: 0 20px 20px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* Card colors */
-    .card-news .card-icon { background: var(--blue-soft); }
-    .card-hr .card-icon { background: var(--red-soft); }
-    .card-guess .card-icon { background: var(--green-soft); }
-    .card-gd .card-icon { background: var(--amber-soft); }
-    .card-company .card-icon { background: var(--accent-soft); }
-
-    /* Card stagger animations */
-    .card:nth-child(1) { animation: fadeUp 0.4s ease-out 0.15s both; }
-    .card:nth-child(2) { animation: fadeUp 0.4s ease-out 0.22s both; }
-    .card:nth-child(3) { animation: fadeUp 0.4s ease-out 0.29s both; }
-    .card:nth-child(4) { animation: fadeUp 0.4s ease-out 0.36s both; }
-    .card:nth-child(5) { animation: fadeUp 0.4s ease-out 0.43s both; }
-
-    /* ── CONTENT STYLES ── */
-    .headline {
-      font-family: 'DM Serif Display', serif;
-      font-size: 21px;
-      line-height: 1.3;
-      margin: 14px 0 8px;
-      color: var(--text);
-    }
-
-    .body-text {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #44403C;
-      margin: 8px 0;
-    }
-
-    .label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--accent);
-      margin: 18px 0 6px;
-    }
-
-    .highlight-box {
-      background: var(--accent-soft);
-      border-left: 3px solid var(--accent);
-      padding: 14px 16px;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      font-size: 14px;
-      line-height: 1.7;
-      color: #44403C;
-      margin: 8px 0;
-    }
-
-    .tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 6px;
-      margin-top: 14px;
-    }
-
-    .tag-blue { background: var(--blue-soft); color: var(--blue); }
-    .tag-green { background: var(--green-soft); color: var(--green); }
-    .tag-amber { background: var(--amber-soft); color: var(--amber); }
-    .tag-red { background: var(--red-soft); color: var(--red); }
-
-    /* STAR Grid */
-    .star-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin: 10px 0;
-    }
-
-    .star-item {
-      background: var(--bg);
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-    }
-
-    .star-letter {
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--accent);
-      margin-bottom: 2px;
-    }
-
-    .star-text {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    /* Steps */
-    .steps {
-      list-style: none;
-      margin: 10px 0;
-      counter-reset: step;
-    }
-
-    .steps li {
-      counter-increment: step;
-      padding: 10px 0 10px 36px;
-      position: relative;
-      font-size: 14px;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-      color: #44403C;
-    }
-
-    .steps li:last-child { border-bottom: none; }
-
-    .steps li::before {
-      content: counter(step);
-      position: absolute;
-      left: 0;
-      top: 11px;
-      width: 24px;
-      height: 24px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 700;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Difficulty */
-    .difficulty {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 3px 12px;
-      border-radius: 20px;
-      margin-top: 14px;
-    }
-
-    .diff-easy { background: var(--green-soft); color: var(--green); }
-    .diff-mid { background: var(--amber-soft); color: var(--amber); }
-    .diff-tough { background: var(--red-soft); color: var(--red); }
-
-    /* Spoiler */
-    .spoiler-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      margin-top: 14px;
-      transition: all 0.2s;
-    }
-
-    .spoiler-btn:hover {
-      background: #5B21B6;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(109,40,217,0.3);
-    }
-
-    .spoiler-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease;
-    }
-
-    .spoiler-content.show { max-height: 600px; }
-
-    /* GD Points */
-    .points-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 14px 0;
-    }
-
-    .points-col h4 {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .points-col ul {
-      list-style: none;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .points-col ul li {
-      padding: 5px 0 5px 20px;
-      position: relative;
-      color: #44403C;
-    }
-
-    .points-col ul li::before {
-      position: absolute;
-      left: 0;
-      top: 5px;
-      font-weight: 700;
-    }
-
-    .points-for li::before { content: "✓"; color: var(--green); }
-    .points-against li::before { content: "✗"; color: var(--red); }
-
-    .tip-box {
-      background: var(--amber-soft);
-      border: 1px solid #FDE68A;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      line-height: 1.6;
-      color: #92400E;
-    }
-
-    /* Company */
-    .meta-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .meta-chip {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    /* ── MARK DONE BUTTON ── */
-    .mark-done {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 16px;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--bg);
-      font-size: 12px;
-      font-weight: 500;
-      font-family: inherit;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .mark-done:hover {
-      border-color: var(--green);
-      color: var(--green);
-      background: var(--green-soft);
-    }
-
-    .mark-done.completed {
-      border-color: var(--green);
-      color: var(--green);
-      background: var(--green-soft);
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-      text-align: center;
-      padding: 32px 20px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      animation: fadeUp 0.4s ease-out 0.5s both;
-    }
-
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    /* ── LOADING ── */
-    .loading {
-      text-align: center;
-      padding: 80px 20px;
-    }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto 16px;
-    }
-
-    .loading-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .loading-sub {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-      opacity: 0.7;
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 480px) {
-      .hero-greeting { font-size: 26px; }
-      .star-grid { grid-template-columns: 1fr; }
-      .points-row { grid-template-columns: 1fr; }
-      .headline { font-size: 19px; }
-      .main { padding: 16px 12px 32px; }
-      .progress-dots { flex-wrap: wrap; }
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#F5F3EE;--surface:#FFF;--text:#1C1917;--text2:#78716C;--accent:#6D28D9;--accent-s:#EDE9FE;--accent-m:#A78BFA;--border:#E7E5E4;--green:#059669;--green-s:#D1FAE5;--amber:#D97706;--amber-s:#FEF3C7;--red:#DC2626;--red-s:#FEE2E2;--blue:#2563EB;--blue-s:#DBEAFE;--r:16px;--rs:10px}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+    .header{background:rgba(255,255,255,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 20px;position:sticky;top:0;z-index:100}
+    .header-inner{max-width:620px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+    .logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent);cursor:pointer}
+    .header-right{display:flex;align-items:center;gap:8px}
+    .date-badge{font-size:12px;font-weight:500;color:var(--text2);background:var(--bg);padding:5px 12px;border-radius:20px;border:1px solid var(--border)}
+    .streak-badge{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--amber);background:var(--amber-s);padding:5px 10px;border-radius:20px}
+    .user-btn{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+    .auth-btn{font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-s);border:none;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit}
+    .nav{max-width:620px;margin:0 auto;padding:12px 16px 0;display:flex;gap:4px}
+    .nav-tab{font-size:13px;font-weight:500;color:var(--text2);background:none;border:none;padding:8px 16px;border-radius:var(--rs);cursor:pointer;font-family:inherit;transition:all .15s}
+    .nav-tab.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .nav-tab:hover{color:var(--text)}
+    .main{max-width:620px;margin:0 auto;padding:16px 16px 40px}
+    .page{display:none}.page.active{display:block}
+    .hero{margin-bottom:20px;animation:fadeUp .5s ease-out}
+    .hero h1{font-family:'DM Serif Display',serif;font-size:30px;line-height:1.2;margin-bottom:4px}
+    .hero p{font-size:14px;color:var(--text2)}
+    .progress-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:18px}
+    .progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .progress-top span{font-size:13px;font-weight:600}
+    .progress-top small{font-size:12px;color:var(--text2)}
+    .progress-track{width:100%;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-m));border-radius:3px;transition:width .5s;width:0%}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden;transition:box-shadow .2s}
+    .card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+    .card-hd{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+    .card-hd:active{background:var(--bg)}
+    .card-lbl{display:flex;align-items:center;gap:12px;flex:1}
+    .card-ico{width:40px;height:40px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .card-t{font-weight:600;font-size:15px}.card-st{font-size:12px;color:var(--text2);margin-top:1px}
+    .card-chv{color:var(--text2);transition:transform .3s;font-size:14px}
+    .card.open .card-chv{transform:rotate(180deg)}
+    .card-bd{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.22,1,.36,1)}
+    .card.open .card-bd{max-height:2000px}
+    .card-in{padding:0 20px 20px;border-top:1px solid var(--border)}
+    .card-news .card-ico{background:var(--blue-s)}.card-hr .card-ico{background:var(--red-s)}.card-guess .card-ico{background:var(--green-s)}.card-gd .card-ico{background:var(--amber-s)}.card-company .card-ico{background:var(--accent-s)}
+    .hl{font-family:'DM Serif Display',serif;font-size:21px;line-height:1.3;margin:14px 0 8px}
+    .bt{font-size:14px;line-height:1.75;color:#44403C;margin:8px 0}
+    .lb{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin:18px 0 6px}
+    .hb{background:var(--accent-s);border-left:3px solid var(--accent);padding:14px 16px;border-radius:0 var(--rs) var(--rs) 0;font-size:14px;line-height:1.7;margin:8px 0}
+    .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+    .si{background:var(--bg);padding:12px 14px;border-radius:var(--rs)}
+    .sl{font-weight:700;font-size:13px;color:var(--accent);margin-bottom:2px}
+    .stx{font-size:13px;color:var(--text2);line-height:1.5}
+    .diff{display:inline-block;font-size:12px;font-weight:600;padding:3px 12px;border-radius:20px;margin-top:14px}
+    .diff-easy{background:var(--green-s);color:var(--green)}.diff-mid{background:var(--amber-s);color:var(--amber)}.diff-tough{background:var(--red-s);color:var(--red)}
+    .steps{list-style:none;margin:10px 0;counter-reset:step}
+    .steps li{counter-increment:step;padding:10px 0 10px 36px;position:relative;font-size:14px;border-bottom:1px solid var(--border)}
+    .steps li:last-child{border-bottom:none}
+    .steps li::before{content:counter(step);position:absolute;left:0;top:11px;width:24px;height:24px;background:var(--accent-s);color:var(--accent);font-size:12px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .pr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+    .pr h4{font-size:13px;font-weight:600;margin-bottom:8px}
+    .pr ul{list-style:none;font-size:13px;line-height:1.6}
+    .pr ul li{padding:5px 0 5px 20px;position:relative}
+    .pf li::before{content:"✓";position:absolute;left:0;top:5px;font-weight:700;color:var(--green)}
+    .pa li::before{content:"✗";position:absolute;left:0;top:5px;font-weight:700;color:var(--red)}
+    .tb{background:var(--amber-s);border:1px solid #FDE68A;padding:12px 16px;border-radius:var(--rs);font-size:13px;color:#92400E}
+    .mc{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+    .mch{background:var(--bg);border:1px solid var(--border);padding:4px 12px;border-radius:20px;font-size:12px;color:var(--text2)}
+    .sp-btn{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:14px}
+    .sp-btn:hover{background:#5B21B6}
+    .sp-c{max-height:0;overflow:hidden;transition:max-height .4s}.sp-c.show{max-height:600px}
+    .mk-d{display:flex;align-items:center;gap:6px;margin-top:16px;padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg);font-size:12px;font-weight:500;font-family:inherit;color:var(--text2);cursor:pointer;transition:all .2s}
+    .mk-d:hover,.mk-d.done{border-color:var(--green);color:var(--green);background:var(--green-s)}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal-bg.show{display:flex}
+    .modal{background:var(--surface);border-radius:var(--r);padding:32px 28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+    .modal h2{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:6px}
+    .modal p{font-size:14px;color:var(--text2);margin-bottom:20px}
+    .modal label{font-size:13px;font-weight:500;display:block;margin-bottom:4px;margin-top:12px}
+    .modal input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:inherit;outline:none}
+    .modal input:focus{border-color:var(--accent)}
+    .modal .btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+    .modal .btn:hover{background:#5B21B6}
+    .modal .switch{font-size:13px;color:var(--text2);text-align:center;margin-top:14px}
+    .modal .switch a{color:var(--accent);cursor:pointer;font-weight:500}
+    .modal .err{font-size:13px;color:var(--red);margin-top:8px;display:none}
+    .pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:14px}
+    .pcard h3{font-size:16px;font-weight:600;margin-bottom:12px}
+    .pcard label{font-size:13px;font-weight:500;display:block;margin-bottom:4px;margin-top:12px;color:var(--text2)}
+    .pcard textarea,.pcard input[type=text]{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-family:inherit;resize:vertical;outline:none}
+    .pcard textarea:focus,.pcard input[type=text]:focus{border-color:var(--accent)}
+    .pcard textarea{min-height:100px}
+    .save-btn{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:16px}
+    .save-btn:hover{background:#5B21B6}
+    .saved-msg{font-size:13px;color:var(--green);margin-left:10px;display:none}
+    .scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:10px}
+    .scard h4{font-size:15px;font-weight:600;margin-bottom:4px}
+    .stags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+    .stag{font-size:11px;background:var(--accent-s);color:var(--accent);padding:2px 8px;border-radius:4px;font-weight:500}
+    .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}
+    .sgrid div{background:var(--bg);padding:8px 10px;border-radius:6px}
+    .sgrid strong{color:var(--accent);font-size:12px}
+    .sdel{font-size:12px;color:var(--red);cursor:pointer;background:none;border:none;font-family:inherit;margin-top:8px}
+    .add-btn{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:16px}
+    .no-login{text-align:center;padding:60px 20px;color:var(--text2);font-size:14px}
+    .loading{text-align:center;padding:80px 20px}
+    .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 16px}
+    .footer{text-align:center;padding:24px 20px;font-size:13px;color:var(--text2)}
+    .footer a{color:var(--accent);text-decoration:none;font-weight:500}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:480px){.sg,.pr,.sgrid{grid-template-columns:1fr}.nav{overflow-x:auto}}
   </style>
 </head>
 <body>
-
-  <div class="header">
-    <div class="header-inner">
-      <div class="logo">InterviewReady</div>
-      <div class="header-right">
-        <div class="streak-badge">🔥 <span id="streakCount">1</span></div>
-        <div class="date-badge" id="todayDate"></div>
-      </div>
+  <div class="header"><div class="header-inner">
+    <div class="logo" onclick="showPage('prep')">InterviewReady</div>
+    <div class="header-right">
+      <div class="streak-badge">🔥 <span id="streakNum">0</span></div>
+      <div class="date-badge" id="dateB"></div>
+      <div id="authArea"></div>
     </div>
+  </div></div>
+  <div class="nav" id="navBar">
+    <button class="nav-tab active" data-page="prep">Today</button>
+    <button class="nav-tab" data-page="stories">Stories</button>
+    <button class="nav-tab" data-page="profile">Profile</button>
   </div>
-
-  <main class="main" id="content">
-    <div class="loading" id="loader">
-      <div class="spinner"></div>
-      <div class="loading-text">Generating today's prep...</div>
-      <div class="loading-sub">Powered by AI, tailored for MBA interviews</div>
-    </div>
+  <main class="main">
+    <div class="page active" id="page-prep"><div class="loading"><div class="spinner"></div><div style="font-size:14px;color:var(--text2)">Generating today's prep...</div></div></div>
+    <div class="page" id="page-stories"></div>
+    <div class="page" id="page-profile"></div>
   </main>
+  <div class="modal-bg" id="authModal"><div class="modal" id="modalInner"></div></div>
+<script>
+let currentUser=null, userProgress={}, streak=0;
+const today=new Date();
+document.getElementById('dateB').textContent=today.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+document.querySelectorAll('.nav-tab').forEach(t=>{t.onclick=()=>showPage(t.dataset.page)});
 
-  <script>
-    // ── Date formatting ──
-    const today = new Date();
-    document.getElementById('todayDate').textContent = today.toLocaleDateString('en-IN', {
-      weekday: 'short', day: 'numeric', month: 'short'
-    });
+function showPage(p){document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelector(`[data-page="${p}"]`).classList.add('active');if(p==='stories')renderStories();if(p==='profile')renderProfile()}
+function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening'}
+function renderAuthArea(){const a=document.getElementById('authArea');if(currentUser){a.innerHTML=`<button class="user-btn" onclick="showUserMenu()" title="${currentUser.name}">${currentUser.name[0].toUpperCase()}</button>`}else{a.innerHTML=`<button class="auth-btn" onclick="showAuth('login')">Log in</button>`}}
 
-    // ── Greeting ──
-    function getGreeting() {
-      const h = new Date().getHours();
-      if (h < 12) return 'Good morning';
-      if (h < 17) return 'Good afternoon';
-      return 'Good evening';
-    }
+function showAuth(mode){const m=document.getElementById('authModal'),inner=document.getElementById('modalInner');if(mode==='login'){inner.innerHTML=`<h2>Welcome back</h2><p>Log in to track your progress</p><label>Email</label><input type="email" id="aEmail"><label>Password</label><input type="password" id="aPass"><div class="err" id="aErr"></div><button class="btn" onclick="doLogin()">Log in</button><div class="switch">No account? <a onclick="showAuth('signup')">Sign up</a></div>`}else{inner.innerHTML=`<h2>Create account</h2><p>Start tracking your prep</p><label>Name</label><input type="text" id="aName"><label>Email</label><input type="email" id="aEmail"><label>Password</label><input type="password" id="aPass"><div class="err" id="aErr"></div><button class="btn" onclick="doSignup()">Sign up</button><div class="switch">Have an account? <a onclick="showAuth('login')">Log in</a></div>`}m.classList.add('show')}
+function closeAuth(){document.getElementById('authModal').classList.remove('show')}
+document.getElementById('authModal').onclick=e=>{if(e.target.id==='authModal')closeAuth()};
 
-    // ── Progress tracking (localStorage) ──
-    const STORAGE_KEY = 'ir_progress_' + today.toISOString().split('T')[0];
-    let completed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+async function doLogin(){const email=document.getElementById('aEmail').value,pass=document.getElementById('aPass').value;const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});const j=await r.json();if(j.success){currentUser=j.user;closeAuth();init()}else{document.getElementById('aErr').style.display='block';document.getElementById('aErr').textContent=j.error}}
+async function doSignup(){const name=document.getElementById('aName').value,email=document.getElementById('aEmail').value,pass=document.getElementById('aPass').value;const r=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass})});const j=await r.json();if(j.success){currentUser=j.user;closeAuth();init()}else{document.getElementById('aErr').style.display='block';document.getElementById('aErr').textContent=j.error}}
+function showUserMenu(){if(confirm('Log out?')){fetch('/api/logout',{method:'POST'}).then(()=>{currentUser=null;userProgress={};streak=0;init()})}}
 
-    function saveProgress() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
-      updateProgress();
-    }
+async function loadProgress(){const r=await fetch('/api/progress');const j=await r.json();userProgress=j.progress||{}}
+async function toggleDone(key,btn){const isDone=!userProgress[key];if(isDone)userProgress[key]=true;else delete userProgress[key];btn.classList.toggle('done',isDone);btn.innerHTML=isDone?'✓ Done':'○ Mark as done';updateProgressBar();if(currentUser){const r=await fetch('/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({card_key:key,completed:isDone})});const j=await r.json();if(j.streak){streak=j.streak;document.getElementById('streakNum').textContent=streak}}}
+function updateProgressBar(){const keys=['news','hr','guess','gd','company'];const done=keys.filter(k=>userProgress[k]).length;const f=document.getElementById('pFill'),c=document.getElementById('pCount');if(f)f.style.width=(done/5*100)+'%';if(c)c.textContent=done+' / 5'}
+function doneBtn(key){const d=userProgress[key];return`<button class="mk-d ${d?'done':''}" onclick="toggleDone('${key}',this)">${d?'✓ Done':'○ Mark as done'}</button>`}
+function toggleCard(id){document.getElementById(id).classList.toggle('open')}
+function toggleSp(b){const c=b.nextElementSibling;c.classList.toggle('show');b.textContent=c.classList.contains('show')?'Hide approach':'Reveal approach'}
+function dc(l){const v=(l||'').toLowerCase();return v==='easy'?'diff-easy':v==='tough'?'diff-tough':'diff-mid'}
 
-    function toggleDone(key, btn) {
-      completed[key] = !completed[key];
-      btn.classList.toggle('completed', completed[key]);
-      btn.innerHTML = completed[key]
-        ? '✓ Done'
-        : '○ Mark as done';
-      saveProgress();
-    }
+function renderPrep(d){document.getElementById('page-prep').innerHTML=`
+<div class="hero"><h1>${greet()}.</h1><p>5 cards · 10 minutes · one step closer to the offer</p></div>
+<div class="progress-box"><div class="progress-top"><span>Today's progress</span><small id="pCount">0 / 5</small></div><div class="progress-track"><div class="progress-fill" id="pFill"></div></div></div>
+<div class="card card-news open" id="c-news"><div class="card-hd" onclick="toggleCard('c-news')"><div class="card-lbl"><div class="card-ico">📰</div><div><div class="card-t">Today's Business Bite</div><div class="card-st">${d.newsBite.category||''}</div></div></div><span class="card-chv">▾</span></div><div class="card-bd"><div class="card-in"><div class="hl">${d.newsBite.headline}</div><p class="bt">${d.newsBite.summary}</p><div class="lb">Interview-ready frame</div><div class="hb">${d.newsBite.interviewFrame}</div>${doneBtn('news')}</div></div></div>
+<div class="card card-hr" id="c-hr"><div class="card-hd" onclick="toggleCard('c-hr')"><div class="card-lbl"><div class="card-ico">🎯</div><div><div class="card-t">HR Question of the Day</div><div class="card-st">Behavioral round</div></div></div><span class="card-chv">▾</span></div><div class="card-bd"><div class="card-in"><div class="hl">${d.hrQuestion.question}</div><p class="bt" style="color:var(--text2);font-style:italic">Testing: ${d.hrQuestion.whyAsked}</p><div class="lb">STAR framework</div><div class="sg"><div class="si"><div class="sl">S — Situation</div><div class="stx">${d.hrQuestion.starTemplate.situation}</div></div><div class="si"><div class="sl">T — Task</div><div class="stx">${d.hrQuestion.starTemplate.task}</div></div><div class="si"><div class="sl">A — Action</div><div class="stx">${d.hrQuestion.starTemplate.action}</div></div><div class="si"><div class="sl">R — Result</div><div class="stx">${d.hrQuestion.starTemplate.result}</div></div></div><div class="lb">Strong opener</div><div class="hb">${d.hrQuestion.sampleOpener}</div>${doneBtn('hr')}</div></div></div>
+<div class="card card-guess" id="c-guess"><div class="card-hd" onclick="toggleCard('c-guess')"><div class="card-lbl"><div class="card-ico">🧮</div><div><div class="card-t">Guesstimate Challenge</div><div class="card-st">Market sizing</div></div></div><span class="card-chv">▾</span></div><div class="card-bd"><div class="card-in"><span class="diff ${dc(d.guesstimate.difficulty)}">${d.guesstimate.difficulty}</span><div class="hl">${d.guesstimate.question}</div><p class="bt">Try solving this in 3 minutes first.</p><button class="sp-btn" onclick="toggleSp(this)">Reveal approach</button><div class="sp-c"><ol class="steps">${d.guesstimate.approach.map(s=>'<li>'+s+'</li>').join('')}</ol><div class="hb">${d.guesstimate.ballpark}</div></div>${doneBtn('guess')}</div></div></div>
+<div class="card card-gd" id="c-gd"><div class="card-hd" onclick="toggleCard('c-gd')"><div class="card-lbl"><div class="card-ico">💬</div><div><div class="card-t">GD Topic of the Day</div><div class="card-st">Argue both sides</div></div></div><span class="card-chv">▾</span></div><div class="card-bd"><div class="card-in"><div class="hl">${d.gdTopic.topic}</div><p class="bt">${d.gdTopic.context}</p><div class="pr"><div><h4 style="color:var(--green)">✅ For</h4><ul class="pf">${d.gdTopic.pointsFor.map(p=>'<li>'+p+'</li>').join('')}</ul></div><div><h4 style="color:var(--red)">❌ Against</h4><ul class="pa">${d.gdTopic.pointsAgainst.map(p=>'<li>'+p+'</li>').join('')}</ul></div></div><div class="tb">💡 ${d.gdTopic.tip}</div>${doneBtn('gd')}</div></div></div>
+<div class="card card-company" id="c-co"><div class="card-hd" onclick="toggleCard('c-co')"><div class="card-lbl"><div class="card-ico">🏢</div><div><div class="card-t">Company Spotlight</div><div class="card-st">${d.companySpotlight.name}</div></div></div><span class="card-chv">▾</span></div><div class="card-bd"><div class="card-in"><div class="mc"><span class="mch">${d.companySpotlight.industry}</span><span class="mch">${d.companySpotlight.roles}</span></div><p class="bt" style="margin-top:14px">${d.companySpotlight.brief}</p><div class="lb">Likely interview question</div><div class="hb">${d.companySpotlight.likelyQuestion}</div>${doneBtn('company')}</div></div></div>
+<div class="footer">Built with ☕ for placement season<br><a href="#" onclick="regen();return false">Regenerate content</a></div>`;updateProgressBar()}
 
-    function updateProgress() {
-      const keys = ['news', 'hr', 'guess', 'gd', 'company'];
-      const doneCount = keys.filter(k => completed[k]).length;
-      const pct = (doneCount / 5) * 100;
+async function regen(){document.getElementById('page-prep').innerHTML='<div class="loading"><div class="spinner"></div></div>';try{const r=await fetch('/api/regenerate',{method:'POST'});const j=await r.json();if(j.success)renderPrep(j.data)}catch(e){location.reload()}}
 
-      const fill = document.getElementById('progressFill');
-      const count = document.getElementById('progressCount');
-      if (fill) fill.style.width = pct + '%';
-      if (count) count.textContent = doneCount + ' / 5 done';
+async function renderStories(){const pg=document.getElementById('page-stories');if(!currentUser){pg.innerHTML='<div class="no-login">Log in to save your STAR stories</div>';return}pg.innerHTML='<div class="loading"><div class="spinner"></div></div>';const r=await fetch('/api/stories');const j=await r.json();const s=j.stories||[];pg.innerHTML=`<div class="hero"><h1>STAR Stories</h1><p>${s.length} stories saved</p></div><button class="add-btn" onclick="showAddStory()">+ Add Story</button><div id="storyForm"></div><div id="storyList">${s.length?s.map(x=>storyCard(x)).join(''):'<div style="text-align:center;color:var(--text2);padding:40px">No stories yet. Add your first STAR story.</div>'}</div>`}
+function storyCard(s){const tags=s.tags?s.tags.split(',').map(t=>'<span class="stag">'+t.trim()+'</span>').join(''):'';return`<div class="scard"><h4>${s.title}</h4>${tags?'<div class="stags">'+tags+'</div>':''}<div class="sgrid"><div><strong>S</strong><br>${s.situation||'—'}</div><div><strong>T</strong><br>${s.task||'—'}</div><div><strong>A</strong><br>${s.action||'—'}</div><div><strong>R</strong><br>${s.result||'—'}</div></div><button class="sdel" onclick="delStory(${s.id})">Delete</button></div>`}
+function showAddStory(){document.getElementById('storyForm').innerHTML=`<div class="pcard" style="margin-bottom:16px"><label>Title</label><input type="text" id="sTitle" placeholder="e.g. Led college fest team"><label>Situation</label><textarea id="sSit" rows="2" placeholder="Set the scene"></textarea><label>Task</label><textarea id="sTask" rows="2" placeholder="Your responsibility"></textarea><label>Action</label><textarea id="sAct" rows="2" placeholder="Steps YOU took"></textarea><label>Result</label><textarea id="sRes" rows="2" placeholder="Outcome with numbers"></textarea><label>Tags (comma-separated)</label><input type="text" id="sTags" placeholder="leadership, teamwork"><button class="save-btn" onclick="saveStory()" style="margin-right:8px">Save</button><button class="save-btn" onclick="document.getElementById('storyForm').innerHTML=''" style="background:var(--text2)">Cancel</button></div>`}
+async function saveStory(){const b={title:document.getElementById('sTitle').value,situation:document.getElementById('sSit').value,task:document.getElementById('sTask').value,action:document.getElementById('sAct').value,result:document.getElementById('sRes').value,tags:document.getElementById('sTags').value};await fetch('/api/stories',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});renderStories()}
+async function delStory(id){if(!confirm('Delete this story?'))return;await fetch('/api/stories/'+id,{method:'DELETE'});renderStories()}
 
-      keys.forEach(k => {
-        const dot = document.getElementById('dot-' + k);
-        if (dot) dot.classList.toggle('done', !!completed[k]);
-      });
-    }
+async function renderProfile(){const pg=document.getElementById('page-profile');if(!currentUser){pg.innerHTML='<div class="no-login">Log in to set up your profile</div>';return}const r=await fetch('/api/me');const j=await r.json();const u=j.user;pg.innerHTML=`<div class="hero"><h1>Your Profile</h1><p>This helps the AI coach personalize your prep</p></div><div class="pcard"><h3>About You</h3><label>Name</label><input type="text" value="${u.name}" disabled style="background:var(--bg)"><label>Email</label><input type="text" value="${u.email}" disabled style="background:var(--bg)"><label>Target Companies</label><input type="text" id="pCo" value="${u.target_companies||''}" placeholder="HUL, McKinsey, Amazon"><label>Target Roles</label><input type="text" id="pRo" value="${u.target_roles||''}" placeholder="Marketing, Strategy"></div><div class="pcard"><h3>CV / Resume</h3><p style="font-size:13px;color:var(--text2);margin-bottom:8px">Paste as plain text. The AI coach will use this.</p><textarea id="pCV" rows="8" placeholder="Paste your resume...">${u.cv||''}</textarea></div><div class="pcard"><h3>Self-Assessment</h3><label>My strengths</label><textarea id="pStr" rows="3" placeholder="What you're good at">${u.strengths||''}</textarea><label>What I struggle with</label><textarea id="pWk" rows="3" placeholder="Areas to improve">${u.weaknesses||''}</textarea></div><button class="save-btn" onclick="saveProfile()">Save Profile</button><span class="saved-msg" id="savedMsg">Saved!</span>`}
+async function saveProfile(){const b={cv:document.getElementById('pCV').value,strengths:document.getElementById('pStr').value,weaknesses:document.getElementById('pWk').value,target_companies:document.getElementById('pCo').value,target_roles:document.getElementById('pRo').value};await fetch('/api/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const m=document.getElementById('savedMsg');m.style.display='inline';setTimeout(()=>m.style.display='none',2000)}
 
-    // ── Card toggle ──
-    function toggleCard(id) {
-      const card = document.getElementById(id);
-      const wasOpen = card.classList.contains('open');
-      card.classList.toggle('open');
-    }
-
-    // ── Spoiler toggle ──
-    function toggleSpoiler(btn) {
-      const content = btn.nextElementSibling;
-      content.classList.toggle('show');
-      btn.textContent = content.classList.contains('show') ? 'Hide approach' : 'Reveal approach';
-    }
-
-    // ── Difficulty class ──
-    function diffClass(level) {
-      const l = (level || '').toLowerCase();
-      if (l === 'easy') return 'diff-easy';
-      if (l === 'tough') return 'diff-tough';
-      return 'diff-mid';
-    }
-
-    // ── Done button HTML ──
-    function doneBtn(key) {
-      const isDone = completed[key];
-      return `<button class="mark-done ${isDone ? 'completed' : ''}" onclick="toggleDone('${key}', this)">
-        ${isDone ? '✓ Done' : '○ Mark as done'}
-      </button>`;
-    }
-
-    // ── Chevron SVG ──
-    const chevron = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></svg>`;
-
-    // ── RENDER ──
-    function render(data) {
-      const d = data;
-      const container = document.getElementById('content');
-
-      container.innerHTML = `
-        <div class="hero">
-          <div class="hero-greeting">${getGreeting()}.</div>
-          <div class="hero-sub">5 cards · 10 minutes · one step closer to the offer</div>
-        </div>
-
-        <div class="progress-section">
-          <div class="progress-header">
-            <span class="progress-label">Today's progress</span>
-            <span class="progress-count" id="progressCount">0 / 5 done</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-          <div class="progress-dots">
-            <span class="progress-dot" id="dot-news" onclick="toggleCard('card-news')">📰 News</span>
-            <span class="progress-dot" id="dot-hr" onclick="toggleCard('card-hr')">🎯 HR</span>
-            <span class="progress-dot" id="dot-guess" onclick="toggleCard('card-guess')">🧮 Guess</span>
-            <span class="progress-dot" id="dot-gd" onclick="toggleCard('card-gd')">💬 GD</span>
-            <span class="progress-dot" id="dot-company" onclick="toggleCard('card-company')">🏢 Co.</span>
-          </div>
-        </div>
-
-        <div class="cards-list">
-
-          <!-- NEWS -->
-          <div class="card card-news open" id="card-news">
-            <div class="card-header" onclick="toggleCard('card-news')">
-              <div class="card-label">
-                <div class="card-icon">📰</div>
-                <div class="card-title-group">
-                  <div class="card-title">Today's Business Bite</div>
-                  <div class="card-subtitle">${d.newsBite.category || 'Business'}</div>
-                </div>
-              </div>
-              <div class="card-chevron">${chevron}</div>
-            </div>
-            <div class="card-body"><div class="card-inner">
-              <div class="headline">${d.newsBite.headline}</div>
-              <p class="body-text">${d.newsBite.summary}</p>
-              <div class="label">Interview-ready frame</div>
-              <div class="highlight-box">${d.newsBite.interviewFrame}</div>
-              ${doneBtn('news')}
-            </div></div>
-          </div>
-
-          <!-- HR -->
-          <div class="card card-hr" id="card-hr">
-            <div class="card-header" onclick="toggleCard('card-hr')">
-              <div class="card-label">
-                <div class="card-icon">🎯</div>
-                <div class="card-title-group">
-                  <div class="card-title">HR Question of the Day</div>
-                  <div class="card-subtitle">Behavioral round</div>
-                </div>
-              </div>
-              <div class="card-chevron">${chevron}</div>
-            </div>
-            <div class="card-body"><div class="card-inner">
-              <div class="headline">${d.hrQuestion.question}</div>
-              <p class="body-text" style="color:var(--text-secondary); font-style:italic;">Testing: ${d.hrQuestion.whyAsked}</p>
-              <div class="label">STAR framework</div>
-              <div class="star-grid">
-                <div class="star-item"><div class="star-letter">S — Situation</div><div class="star-text">${d.hrQuestion.starTemplate.situation}</div></div>
-                <div class="star-item"><div class="star-letter">T — Task</div><div class="star-text">${d.hrQuestion.starTemplate.task}</div></div>
-                <div class="star-item"><div class="star-letter">A — Action</div><div class="star-text">${d.hrQuestion.starTemplate.action}</div></div>
-                <div class="star-item"><div class="star-letter">R — Result</div><div class="star-text">${d.hrQuestion.starTemplate.result}</div></div>
-              </div>
-              <div class="label">Strong opener</div>
-              <div class="highlight-box">${d.hrQuestion.sampleOpener}</div>
-              ${doneBtn('hr')}
-            </div></div>
-          </div>
-
-          <!-- GUESSTIMATE -->
-          <div class="card card-guess" id="card-guess">
-            <div class="card-header" onclick="toggleCard('card-guess')">
-              <div class="card-label">
-                <div class="card-icon">🧮</div>
-                <div class="card-title-group">
-                  <div class="card-title">Guesstimate Challenge</div>
-                  <div class="card-subtitle">Market sizing</div>
-                </div>
-              </div>
-              <div class="card-chevron">${chevron}</div>
-            </div>
-            <div class="card-body"><div class="card-inner">
-              <span class="difficulty ${diffClass(d.guesstimate.difficulty)}">${d.guesstimate.difficulty}</span>
-              <div class="headline">${d.guesstimate.question}</div>
-              <p class="body-text">Try solving this in 3 minutes before looking at the approach.</p>
-              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Reveal approach</button>
-              <div class="spoiler-content">
-                <ol class="steps">
-                  ${d.guesstimate.approach.map(s => `<li>${s}</li>`).join('')}
-                </ol>
-                <div class="highlight-box">${d.guesstimate.ballpark}</div>
-              </div>
-              ${doneBtn('guess')}
-            </div></div>
-          </div>
-
-          <!-- GD -->
-          <div class="card card-gd" id="card-gd">
-            <div class="card-header" onclick="toggleCard('card-gd')">
-              <div class="card-label">
-                <div class="card-icon">💬</div>
-                <div class="card-title-group">
-                  <div class="card-title">GD Topic of the Day</div>
-                  <div class="card-subtitle">Argue both sides</div>
-                </div>
-              </div>
-              <div class="card-chevron">${chevron}</div>
-            </div>
-            <div class="card-body"><div class="card-inner">
-              <div class="headline">${d.gdTopic.topic}</div>
-              <p class="body-text">${d.gdTopic.context}</p>
-              <div class="points-row">
-                <div class="points-col">
-                  <h4 style="color:var(--green)">✅ For</h4>
-                  <ul class="points-for">${d.gdTopic.pointsFor.map(p => `<li>${p}</li>`).join('')}</ul>
-                </div>
-                <div class="points-col">
-                  <h4 style="color:var(--red)">❌ Against</h4>
-                  <ul class="points-against">${d.gdTopic.pointsAgainst.map(p => `<li>${p}</li>`).join('')}</ul>
-                </div>
-              </div>
-              <div class="tip-box">💡 ${d.gdTopic.tip}</div>
-              ${doneBtn('gd')}
-            </div></div>
-          </div>
-
-          <!-- COMPANY -->
-          <div class="card card-company" id="card-company">
-            <div class="card-header" onclick="toggleCard('card-company')">
-              <div class="card-label">
-                <div class="card-icon">🏢</div>
-                <div class="card-title-group">
-                  <div class="card-title">Company Spotlight</div>
-                  <div class="card-subtitle">${d.companySpotlight.name}</div>
-                </div>
-              </div>
-              <div class="card-chevron">${chevron}</div>
-            </div>
-            <div class="card-body"><div class="card-inner">
-              <div class="meta-row">
-                <span class="meta-chip">${d.companySpotlight.industry}</span>
-                <span class="meta-chip">${d.companySpotlight.roles}</span>
-              </div>
-              <p class="body-text" style="margin-top:14px;">${d.companySpotlight.brief}</p>
-              <div class="label">Likely interview question</div>
-              <div class="highlight-box">${d.companySpotlight.likelyQuestion}</div>
-              ${doneBtn('company')}
-            </div></div>
-          </div>
-
-        </div>
-
-        <div class="footer">
-          Built with ☕ for placement season<br>
-          <a href="#" onclick="regenerate(); return false;">Regenerate today's content</a>
-        </div>
-      `;
-
-      updateProgress();
-    }
-
-    // ── Regenerate content ──
-    async function regenerate() {
-      document.getElementById('content').innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div>
-          <div class="loading-text">Regenerating...</div>
-        </div>`;
-
-      try {
-        const res = await fetch('/api/regenerate', { method: 'POST' });
-        const json = await res.json();
-        if (json.success) render(json.data);
-      } catch(e) {
-        location.reload();
-      }
-    }
-
-    // ── INIT ──
-    fetch('/api/today')
-      .then(r => r.json())
-      .then(json => {
-        if (json.success) render(json.data);
-        else document.getElementById('content').innerHTML = `
-          <div class="loading">
-            <div class="loading-text">Something went wrong. Check your terminal.</div>
-          </div>`;
-      })
-      .catch(() => {
-        document.getElementById('content').innerHTML = `
-          <div class="loading">
-            <div class="loading-text">Can't reach the server. Is it running?</div>
-          </div>`;
-      });
-  </script>
-
+async function init(){renderAuthArea();try{const r=await fetch('/api/me');const j=await r.json();if(j.loggedIn){currentUser=j.user;streak=j.streak.current_streak;renderAuthArea()}}catch(e){}document.getElementById('streakNum').textContent=streak;if(currentUser)await loadProgress();try{const r=await fetch('/api/today');const j=await r.json();if(j.success)renderPrep(j.data)}catch(e){document.getElementById('page-prep').innerHTML='<div class="no-login">Can\'t reach server.</div>'}}
+init();
+</script>
 </body>
 </html>

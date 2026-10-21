@@ -4,15 +4,18 @@ const path = require("path");
 const Database = require("better-sqlite3");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const cron = require("node-cron");
+const bcrypt = require("bcryptjs");
+const session = require("express-session");
 
 // ============================================================
 // CONFIG
 // ============================================================
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "PASTE_YOUR_GEMINI_API_KEY_HERE";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "AQ.Ab8RN6KkVX6OXHvnvwhEaTQNdW1K9W7yL5Su9EU3vYJHCzcIWQ";
 const PORT = process.env.PORT || 3000;
+const SESSION_SECRET = process.env.SESSION_SECRET || "interview-ready-secret-2026";
 
 // ============================================================
-// DATABASE SETUP
+// DATABASE
 // ============================================================
 const db = new Database("interview_ready.db");
 db.pragma("journal_mode = WAL");
@@ -23,84 +26,102 @@ db.exec(`
     date TEXT UNIQUE NOT NULL,
     content TEXT NOT NULL,
     created_at TEXT DEFAULT (datetime('now'))
-  )
+  );
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    cv TEXT DEFAULT '',
+    strengths TEXT DEFAULT '',
+    weaknesses TEXT DEFAULT '',
+    target_companies TEXT DEFAULT '',
+    target_roles TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS progress (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    date TEXT NOT NULL,
+    card_key TEXT NOT NULL,
+    UNIQUE(user_id, date, card_key)
+  );
+  CREATE TABLE IF NOT EXISTS stories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    situation TEXT DEFAULT '',
+    task TEXT DEFAULT '',
+    action TEXT DEFAULT '',
+    result TEXT DEFAULT '',
+    tags TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+  CREATE TABLE IF NOT EXISTS streaks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE NOT NULL,
+    current_streak INTEGER DEFAULT 0,
+    longest_streak INTEGER DEFAULT 0,
+    last_active_date TEXT DEFAULT ''
+  );
 `);
 
 // ============================================================
-// GEMINI AI SETUP
+// GEMINI
 // ============================================================
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
 
 const DAILY_PROMPT = `You are an MBA interview preparation coach for Indian B-school students preparing for campus placements.
 
-Generate today's complete prep package. Be specific, use real recent trends and data points you know about. Make sure each section covers a DIFFERENT topic — do not repeat the same company or theme across sections.
+Generate today's complete prep package. Be specific, use real recent trends and data points. Each section must cover a DIFFERENT topic.
 
-Return ONLY a valid JSON object (no markdown, no backticks, no explanation) with these exact keys:
+Return ONLY a valid JSON object (no markdown, no backticks) with these keys:
 
 {
   "newsBite": {
-    "headline": "A compelling headline about one important business/economic topic",
-    "summary": "A 150-200 word summary explaining the topic clearly. Include numbers, company names, and specifics. Make it relevant to Indian business context.",
-    "interviewFrame": "A 3-sentence answer frame: how to respond if an interviewer asks about this topic. Start with context, add your analysis, end with implications.",
+    "headline": "Compelling headline about one business/economic topic",
+    "summary": "150-200 word summary with numbers, company names, Indian business context.",
+    "interviewFrame": "3-sentence answer frame for interviews.",
     "category": "One of: Economy, Markets, Technology, FMCG, Banking, Startups, Policy, Global"
   },
   "hrQuestion": {
-    "question": "A behavioral HR question commonly asked in MBA campus placements",
-    "whyAsked": "One sentence on what the interviewer is really testing",
+    "question": "A behavioral HR question for MBA placements",
+    "whyAsked": "What the interviewer is testing",
     "starTemplate": {
-      "situation": "Prompt to help them think of a relevant situation",
-      "task": "What was your specific responsibility",
-      "action": "What steps did YOU take (not the team)",
-      "result": "Quantify the outcome — use numbers"
+      "situation": "Prompt for a relevant situation",
+      "task": "Your specific responsibility",
+      "action": "Steps YOU took",
+      "result": "Quantified outcome"
     },
-    "sampleOpener": "A strong opening line to start the answer"
+    "sampleOpener": "Strong opening line"
   },
   "guesstimate": {
-    "question": "A market sizing or estimation question relevant to Indian markets",
-    "difficulty": "One of: Easy, Mid, Tough",
-    "approach": [
-      "Step 1 of solving this",
-      "Step 2",
-      "Step 3",
-      "Step 4"
-    ],
-    "ballpark": "The rough final answer with reasoning"
+    "question": "Market sizing question for Indian markets",
+    "difficulty": "Easy, Mid, or Tough",
+    "approach": ["Step 1","Step 2","Step 3","Step 4"],
+    "ballpark": "Rough answer with reasoning"
   },
   "gdTopic": {
-    "topic": "A current, debatable topic suitable for MBA group discussions",
-    "context": "One sentence of context about why this topic matters now",
-    "pointsFor": [
-      "First argument in favor",
-      "Second argument in favor",
-      "Third argument in favor"
-    ],
-    "pointsAgainst": [
-      "First argument against",
-      "Second argument against",
-      "Third argument against"
-    ],
-    "tip": "A short GD strategy tip for this topic"
+    "topic": "Current debatable GD topic",
+    "context": "Why this matters now",
+    "pointsFor": ["Point 1","Point 2","Point 3"],
+    "pointsAgainst": ["Point 1","Point 2","Point 3"],
+    "tip": "GD strategy tip"
   },
   "companySpotlight": {
-    "name": "Name of a company that actively recruits from MBA campuses in India",
-    "industry": "The company's sector",
-    "brief": "100-word overview — what the company does, its recent performance or news, why it's interesting for MBA graduates",
-    "roles": "What roles it typically hires MBAs for",
-    "likelyQuestion": "One interview question this company is known to ask or that's relevant to their business"
+    "name": "Company that recruits MBAs in India",
+    "industry": "Sector",
+    "brief": "100-word overview with recent news",
+    "roles": "Typical MBA roles",
+    "likelyQuestion": "Interview question for this company"
   }
 }`;
 
-// ============================================================
-// GENERATE OR FETCH DAILY CONTENT
-// ============================================================
 async function getDailyContent() {
   const today = new Date().toISOString().split("T")[0];
-
   const cached = db.prepare("SELECT content FROM daily_content WHERE date = ?").get(today);
-  if (cached) {
-    return JSON.parse(cached.content);
-  }
+  if (cached) return JSON.parse(cached.content);
 
   console.log("Generating today's content from Gemini...");
   try {
@@ -108,118 +129,144 @@ async function getDailyContent() {
     const text = result.response.text();
     const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
     const content = JSON.parse(cleaned);
-
-    db.prepare("INSERT OR REPLACE INTO daily_content (date, content) VALUES (?, ?)").run(
-      today,
-      JSON.stringify(content)
-    );
-
+    db.prepare("INSERT OR REPLACE INTO daily_content (date, content) VALUES (?, ?)").run(today, JSON.stringify(content));
     console.log("Content generated and cached for", today);
     return content;
   } catch (err) {
     console.error("Gemini API error:", err.message);
-    return {
-      newsBite: {
-        headline: "Content generation in progress",
-        summary: "Today's content is being prepared. Please refresh in a minute.",
-        interviewFrame: "Please refresh the page shortly.",
-        category: "System"
-      },
-      hrQuestion: {
-        question: "Tell me about a time you had to adapt quickly to a major change.",
-        whyAsked: "Tests adaptability and resilience under pressure.",
-        starTemplate: {
-          situation: "Think of when plans changed suddenly",
-          task: "What was expected of you despite the change",
-          action: "How did you adjust your approach",
-          result: "What was the outcome — use a number"
-        },
-        sampleOpener: "During my internship, the product roadmap shifted entirely two weeks in..."
-      },
-      guesstimate: {
-        question: "How many haircuts happen in Delhi every day?",
-        difficulty: "Mid",
-        approach: ["Delhi population: ~20 million", "50% male with cuts every 3-4 weeks = ~350K/day", "50% female with cuts every 3-4 months = ~100K/day", "Add children and grooming services"],
-        ballpark: "Approximately 400,000-500,000 haircuts per day"
-      },
-      gdTopic: {
-        topic: "Should India prioritize manufacturing over services?",
-        context: "The PLI scheme is pushing Make in India, but services remain India's strength.",
-        pointsFor: ["Manufacturing creates mass employment", "Reduces import dependence", "China+1 opportunity"],
-        pointsAgainst: ["India's edge is in IT/services", "Manufacturing needs infrastructure India lacks", "Automation reduces factory jobs"],
-        tip: "Argue for a balanced approach with sector-specific priorities."
-      },
-      companySpotlight: {
-        name: "Asian Paints",
-        industry: "Consumer Goods",
-        brief: "India's largest paint company with ~55% market share and ₹35,000+ crore revenue. Expanding into home decor services.",
-        roles: "Sales, Marketing, Supply Chain, Finance",
-        likelyQuestion: "How would you convince a small-town dealer to switch to Asian Paints?"
-      }
-    };
+    return { newsBite:{headline:"Content loading...",summary:"Please refresh in a moment.",interviewFrame:"Refresh shortly.",category:"System"}, hrQuestion:{question:"Tell me about a time you adapted to change.",whyAsked:"Tests adaptability.",starTemplate:{situation:"Think of a sudden change",task:"Your responsibility",action:"Steps you took",result:"Outcome with numbers"},sampleOpener:"During my internship..."}, guesstimate:{question:"How many coffee shops are in Bangalore?",difficulty:"Mid",approach:["Population ~13M","Working professionals ~4M","1 shop per 500 in commercial areas","~3000-4000 shops"],ballpark:"Around 3,500"}, gdTopic:{topic:"Should MBA education go fully online?",context:"Post-pandemic hybrid learning debate.",pointsFor:["Accessible","Lower costs","Flexible"],pointsAgainst:["Networking needs in-person","Case discussions suffer","Recruiters prefer campus"],tip:"Argue for hybrid."}, companySpotlight:{name:"Marico",industry:"FMCG",brief:"Maker of Parachute, Saffola. Revenue ~10,000 crore.",roles:"Marketing, Sales, Supply Chain",likelyQuestion:"How would you reposition Saffola for Gen Z?"} };
   }
 }
 
-// ============================================================
-// CRON: Auto-generate content at 6:00 AM daily
-// ============================================================
+// CRON
 cron.schedule("0 6 * * *", async () => {
-  console.log("\n[CRON] 6:00 AM — Generating today's content...");
-  try {
-    await getDailyContent();
-    console.log("[CRON] Content ready for today!");
-  } catch (err) {
-    console.error("[CRON] Failed:", err.message);
-  }
+  console.log("[CRON] 6 AM — Generating content...");
+  try { await getDailyContent(); } catch(e) { console.error("[CRON]", e.message); }
 });
-
 console.log("Scheduled: Daily content generation at 6:00 AM");
 
 // ============================================================
-// EXPRESS SERVER
+// STREAK HELPER
+// ============================================================
+function updateStreak(userId) {
+  const today = new Date().toISOString().split("T")[0];
+  const s = db.prepare("SELECT * FROM streaks WHERE user_id = ?").get(userId);
+  if (!s) { db.prepare("INSERT INTO streaks (user_id,current_streak,longest_streak,last_active_date) VALUES (?,1,1,?)").run(userId,today); return 1; }
+  if (s.last_active_date === today) return s.current_streak;
+  const diff = Math.floor((new Date(today) - new Date(s.last_active_date)) / 86400000);
+  const ns = diff === 1 ? s.current_streak + 1 : 1;
+  const lg = Math.max(ns, s.longest_streak);
+  db.prepare("UPDATE streaks SET current_streak=?,longest_streak=?,last_active_date=? WHERE user_id=?").run(ns,lg,today,userId);
+  return ns;
+}
+
+// ============================================================
+// EXPRESS
 // ============================================================
 const app = express();
-app.use(cors());
+app.use(cors({ credentials: true }));
 app.use(express.json());
+app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false, cookie: { maxAge: 30*24*60*60*1000 } }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/api/today", async (req, res) => {
-  try {
-    const content = await getDailyContent();
-    res.json({ success: true, date: new Date().toISOString().split("T")[0], data: content });
-  } catch (err) {
-    res.status(500).json({ success: false, error: "Failed to load content" });
+// -- AUTH --
+app.post("/api/signup", (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) return res.json({ success:false, error:"All fields required" });
+  if (password.length < 4) return res.json({ success:false, error:"Password too short" });
+  const exists = db.prepare("SELECT id FROM users WHERE email=?").get(email.toLowerCase());
+  if (exists) return res.json({ success:false, error:"Email already registered" });
+  const hash = bcrypt.hashSync(password, 10);
+  const r = db.prepare("INSERT INTO users (name,email,password) VALUES (?,?,?)").run(name.trim(), email.toLowerCase().trim(), hash);
+  req.session.userId = r.lastInsertRowid;
+  res.json({ success:true, user:{ id:r.lastInsertRowid, name:name.trim(), email:email.toLowerCase() } });
+});
+
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.json({ success:false, error:"Email and password required" });
+  const user = db.prepare("SELECT * FROM users WHERE email=?").get(email.toLowerCase().trim());
+  if (!user) return res.json({ success:false, error:"No account with this email" });
+  if (!bcrypt.compareSync(password, user.password)) return res.json({ success:false, error:"Wrong password" });
+  req.session.userId = user.id;
+  res.json({ success:true, user:{ id:user.id, name:user.name, email:user.email } });
+});
+
+app.post("/api/logout", (req, res) => { req.session.destroy(); res.json({ success:true }); });
+
+app.get("/api/me", (req, res) => {
+  if (!req.session.userId) return res.json({ loggedIn:false });
+  const user = db.prepare("SELECT id,name,email,cv,strengths,weaknesses,target_companies,target_roles FROM users WHERE id=?").get(req.session.userId);
+  const streak = db.prepare("SELECT current_streak,longest_streak FROM streaks WHERE user_id=?").get(req.session.userId);
+  res.json({ loggedIn:true, user, streak: streak || {current_streak:0,longest_streak:0} });
+});
+
+// -- PROFILE --
+app.put("/api/profile", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ success:false });
+  const { cv,strengths,weaknesses,target_companies,target_roles } = req.body;
+  db.prepare("UPDATE users SET cv=?,strengths=?,weaknesses=?,target_companies=?,target_roles=? WHERE id=?").run(cv||'',strengths||'',weaknesses||'',target_companies||'',target_roles||'',req.session.userId);
+  res.json({ success:true });
+});
+
+// -- PROGRESS --
+app.get("/api/progress", (req, res) => {
+  if (!req.session.userId) return res.json({ progress:{} });
+  const today = new Date().toISOString().split("T")[0];
+  const rows = db.prepare("SELECT card_key FROM progress WHERE user_id=? AND date=?").all(req.session.userId, today);
+  const p = {}; rows.forEach(r => p[r.card_key] = true);
+  res.json({ progress:p });
+});
+
+app.post("/api/progress", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ success:false });
+  const { card_key, completed } = req.body;
+  const today = new Date().toISOString().split("T")[0];
+  if (completed) {
+    db.prepare("INSERT OR REPLACE INTO progress (user_id,date,card_key) VALUES (?,?,?)").run(req.session.userId,today,card_key);
+    const streak = updateStreak(req.session.userId);
+    res.json({ success:true, streak });
+  } else {
+    db.prepare("DELETE FROM progress WHERE user_id=? AND date=? AND card_key=?").run(req.session.userId,today,card_key);
+    res.json({ success:true });
   }
+});
+
+// -- STORIES --
+app.get("/api/stories", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ success:false });
+  const stories = db.prepare("SELECT * FROM stories WHERE user_id=? ORDER BY created_at DESC").all(req.session.userId);
+  res.json({ stories });
+});
+
+app.post("/api/stories", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ success:false });
+  const { title,situation,task,action,result,tags } = req.body;
+  if (!title) return res.json({ success:false, error:"Title required" });
+  const r = db.prepare("INSERT INTO stories (user_id,title,situation,task,action,result,tags) VALUES (?,?,?,?,?,?,?)").run(req.session.userId,title,situation||'',task||'',action||'',result||'',tags||'');
+  res.json({ success:true, id:r.lastInsertRowid });
+});
+
+app.delete("/api/stories/:id", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ success:false });
+  db.prepare("DELETE FROM stories WHERE id=? AND user_id=?").run(req.params.id, req.session.userId);
+  res.json({ success:true });
+});
+
+// -- CONTENT --
+app.get("/api/today", async (req, res) => {
+  try { const c = await getDailyContent(); res.json({ success:true, date:new Date().toISOString().split("T")[0], data:c }); }
+  catch(e) { res.status(500).json({ success:false, error:"Failed" }); }
 });
 
 app.post("/api/regenerate", async (req, res) => {
   const today = new Date().toISOString().split("T")[0];
-  db.prepare("DELETE FROM daily_content WHERE date = ?").run(today);
-  try {
-    const content = await getDailyContent();
-    res.json({ success: true, data: content });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
+  db.prepare("DELETE FROM daily_content WHERE date=?").run(today);
+  try { const c = await getDailyContent(); res.json({ success:true, data:c }); }
+  catch(e) { res.status(500).json({ success:false, error:e.message }); }
 });
 
-app.get("/api/history", (req, res) => {
-  const rows = db.prepare("SELECT date FROM daily_content ORDER BY date DESC LIMIT 30").all();
-  res.json({ dates: rows.map(r => r.date) });
-});
-
-app.get("/api/day/:date", (req, res) => {
-  const row = db.prepare("SELECT content FROM daily_content WHERE date = ?").get(req.params.date);
-  if (row) {
-    res.json({ success: true, date: req.params.date, data: JSON.parse(row.content) });
-  } else {
-    res.json({ success: false, error: "No content for this date" });
-  }
-});
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+app.get("/", (req, res) => { res.sendFile(path.join(__dirname, "public", "index.html")); });
 
 app.listen(PORT, () => {
   console.log(`\n========================================`);
