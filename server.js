@@ -38,7 +38,7 @@ async function initDB() {
 initDB().catch(function(e) { console.error("DB init error:", e.message); });
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // Express app must be created before any routes
 var app = express();
